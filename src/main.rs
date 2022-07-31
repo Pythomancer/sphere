@@ -1,5 +1,9 @@
-use std::time::SystemTime;
+pub mod geometry;
+pub mod nvol;
+pub mod render;
+use crate::render::*;
 use macroquad::prelude::*;
+use std::time::SystemTime;
 
 #[macroquad::main("Particles")]
 async fn main() {
@@ -7,6 +11,8 @@ async fn main() {
     let mut time = SystemTime::now();
     loop {
         clear_background(WHITE);
+        let world = World::new();
+
         let t: u128 = SystemTime::now()
             .duration_since(time)
             .expect("time reversed")
