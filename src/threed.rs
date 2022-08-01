@@ -7,18 +7,18 @@ pub struct Point3D {
     pub y: f32,
     pub z: f32,
 }
-
-pub struct Point2D {
-    pub x: f32,
-    pub y: f32,
-}
-
 pub struct SPoint {
     pub phi: f32,
     pub theta: f32,
     pub rad: f32,
 }
 
+#[derive(PartialEq)]
+pub struct Triangle3D {
+    pub a: Point3D,
+    pub b: Point3D,
+    pub c: Point3D,
+}
 impl Add for Point3D {
     type Output = Self;
 
@@ -107,6 +107,22 @@ impl Point3D {
     }
 }
 
+impl Triangle3D {
+    pub fn matches(&self, other: &Triangle3D) -> bool {
+        (self.a == other.a || self.a == other.b || self.a == other.c)
+            && (self.b == other.a || self.b == other.b || self.b == other.c)
+            && (self.c == other.a || self.c == other.b || self.c == other.c)
+    }
+    pub fn is_in(&self, list: Vec<Triangle3D>) -> bool {
+        for tri in list {
+            if self.matches(&tri) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 impl SPoint {
     pub fn from_cartesian(c_pt: Point3D) -> SPoint {
         let r = (c_pt.x * c_pt.x + c_pt.y * c_pt.y + c_pt.z * c_pt.z).sqrt();
@@ -132,93 +148,4 @@ impl SPoint {
             rad: self.rad - other.rad,
         }
     }
-}
-
-impl Add for Point2D {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-impl Sub for Point2D {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
-    }
-}
-
-impl AddAssign for Point2D {
-    fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        };
-    }
-}
-
-impl fmt::Display for Point2D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(x={}, y={})", self.x, self.y)
-    }
-}
-
-impl Point2D {
-    pub fn new() -> Point2D {
-        Point2D { x: 0.0, y: 0.0 }
-    }
-
-    pub fn smaller_x(&self, other: &Point2D) -> f32 {
-        if self.x < other.x {
-            return self.x;
-        }
-        other.x
-    }
-    pub fn greater_x(&self, other: &Point2D) -> f32 {
-        if self.x > other.x {
-            return self.x;
-        }
-        other.x
-    }
-    pub fn from_polar(r: f32, theta: f32) -> Point2D {
-        Point2D {
-            x: r * theta.cos(),
-            y: r * theta.sin(),
-        }
-    }
-
-    pub fn scale(&self, scalar: f32) -> Point2D {
-        Point2D {
-            x: self.x * scalar,
-            y: self.y * scalar,
-        }
-    }
-
-    pub fn radius(&self) -> f32 {
-        (self.x.powf(2.0) + self.y.powf(2.0)).sqrt()
-    }
-
-    pub fn angle(&self) -> f32 {
-        self.y.atan2(self.x)
-    }
-
-    pub fn rotate(&self, ang: f32) -> Point2D {
-        Point2D::from_polar(self.radius(), self.angle() + ang)
-    }
-
-    pub fn reflect_across(&self, other: &Point2D) -> Point2D {
-        Point2D::from_polar(self.radius(), 2.0 * other.angle() - self.angle())
-    }
-
-    // pub fn sum(i: Iterator){
-    //     let mut s =
-    // }
 }
