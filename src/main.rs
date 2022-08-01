@@ -1,7 +1,9 @@
 pub mod geometry;
 pub mod nvol;
 pub mod render;
-use crate::render::*;
+use crate::geometry::Point3D;
+use crate::nvol::Geometry;
+use crate::render::{Camera, World};
 use macroquad::prelude::*;
 use std::time::SystemTime;
 
@@ -11,8 +13,15 @@ async fn main() {
     let mut time = SystemTime::now();
     loop {
         clear_background(WHITE);
-        let world = World::new();
-
+        let mut world = World::new();
+        world.add(Geometry::cube(
+            0.3,
+            Point3D {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
+        ));
         let t: u128 = SystemTime::now()
             .duration_since(time)
             .expect("time reversed")
