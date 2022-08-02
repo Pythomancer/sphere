@@ -1,8 +1,9 @@
-use crate::geometry::*;
+use crate::threed::*;
+use std::fmt;
 type Handle = usize;
 pub struct Geometry {
     vertices: Vec<Vertex>,
-    tris_cache: Option<Vec<Triangle3D>>,
+    pub tris_cache: Vec<Triangle3D>,
 }
 #[derive(Clone)]
 pub struct Vertex {
@@ -37,21 +38,18 @@ impl Geometry {
             .coordinate
     }
     fn add_if_no_match(&mut self, tri: Triangle3D) -> bool {
-        if self.tris_cache.is_some() {
-            for t in self.tris_cache.as_ref().unwrap() {
-                if t.matches(&tri) {
-                    self.tris_cache.as_mut().unwrap().push(tri);
-                    return true;
-                }
+        for t in &self.tris_cache {
+            if t.matches(&tri) {
+                return true;
             }
-            return false;
         }
+        self.tris_cache.push(tri);
         false
     }
     pub fn cube(sidelen: f32, c: Point3D) -> Geometry {
         let mut vol = Geometry {
             vertices: Vec::new(),
-            tris_cache: None,
+            tris_cache: Vec::new(),
         };
         let r = sidelen / 2.0;
         vol.add_point(c.x + r, c.y + r, c.z + r); // 0
@@ -64,15 +62,18 @@ impl Geometry {
         vol.add_point(c.x - r, c.y - r, c.z - r); // 7
         for index in 0..8 {
             for link_index in 0..8 {
-                if link_index != index && link_index != 7 - index {}
+                if link_index != index && link_index != 7 - index {
+                    vol.link(index, link_index);
+                }
             }
         }
+        // for v in &vol.vertices {
+        //     println!("{}", v);
+        // }
         vol
     }
-    fn make_tris(&mut self) {
-        if self.tris_cache.is_some() {
-            self.tris_cache = Some(Vec::new());
-        }
+    pub fn make_tris(&mut self) {
+        self.tris_cache = Vec::new();
         for v_handle in 0..self.vertices.len() {
             for link in self.get_links(v_handle) {
                 for link_link in self.get_links(link) {
@@ -82,7 +83,7 @@ impl Geometry {
                         c: self.get_pt_at(link_link),
                     };
                     if link_link != v_handle {
-                        self.add_if_no_match(tri);
+                        if self.add_if_no_match(tri) {}
                     }
                 }
             }
@@ -96,5 +97,15 @@ impl Vertex {
             coordinate: Point3D::new(),
             links: Vec::new(),
         }
+    }
+}
+impl fmt::Display for Vertex {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Vertex {}, links: {}",
+            self.coordinate,
+            format!("{:?}", self.links)
+        )
     }
 }

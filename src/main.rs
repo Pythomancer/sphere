@@ -1,9 +1,10 @@
-pub mod geometry;
 pub mod nvol;
 pub mod render;
-use crate::geometry::Point3D;
+pub mod threed;
+pub mod twod;
 use crate::nvol::Geometry;
 use crate::render::{Camera, World};
+use crate::threed::Point3D;
 use macroquad::prelude::*;
 use std::time::SystemTime;
 
@@ -22,6 +23,7 @@ async fn main() {
                 z: 0.0,
             },
         ));
+        world.render_frame();
         let t: u128 = SystemTime::now()
             .duration_since(time)
             .expect("time reversed")

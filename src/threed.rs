@@ -53,12 +53,6 @@ impl AddAssign for Point3D {
     }
 }
 
-impl fmt::Display for Point3D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(x={}, y={}, y={})", self.x, self.y, self.z)
-    }
-}
-
 impl Point3D {
     pub fn new() -> Point3D {
         Point3D {
@@ -147,5 +141,15 @@ impl SPoint {
             theta: self.theta - other.theta,
             rad: self.rad - other.rad,
         }
+    }
+}
+impl fmt::Display for Point3D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+impl fmt::Display for Triangle3D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(({}, {}, {})", self.a, self.b, self.c)
     }
 }

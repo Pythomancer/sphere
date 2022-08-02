@@ -1,5 +1,6 @@
-use crate::geometry::{Point2D, Point3D, SPoint, Triangle2D, Triangle3D};
 use crate::nvol::Geometry;
+use crate::threed::*;
+use crate::twod::*;
 use macroquad::prelude::*;
 use macroquad::window;
 enum RenderMode {
@@ -27,7 +28,7 @@ impl Camera {
                 z: 0.0,
             },
             point_at: Point3D {
-                x: 1.0,
+                x: 0.5,
                 y: 0.0,
                 z: 0.0,
             },
@@ -44,25 +45,31 @@ impl Camera {
     fn map2d(&self, pt: SPoint) -> Point2D {
         let p = pt.rotate_sub(&self.point_at.to_spherical());
         Point2D {
-            x: p.theta * 2.0 / self.hfov(),
-            y: p.phi * 2.0 / self.vfov(),
+            x: (p.theta * 2.0 / self.hfov() + 0.5) * window::screen_width(),
+            y: (p.phi * 2.0 / self.vfov() + 0.5) * window::screen_height(),
         }
     }
-    fn draw_tri(&self, tri: Triangle3D) {
-        let s = self.point_at.to_spherical();
+    fn draw_tri(&self, tri: &Triangle3D) {
         let pov = (
             (tri.a - self.position).to_spherical(),
             (tri.b - self.position).to_spherical(),
             (tri.c - self.position).to_spherical(),
         );
-        let map_tri = Triangle2D {
+        let t = Triangle2D {
             a: self.map2d(pov.0),
             b: self.map2d(pov.1),
             c: self.map2d(pov.2),
         };
-        // draw_poly(x, y, sides, radius, rotation, color)
+        println!("{}", t);
+        t.draw();
     }
-    pub fn render_frame(&self) {}
+    pub fn draw_geometry(&mut self, geometry: &mut Geometry) {
+        geometry.make_tris();
+        for tri in &geometry.tris_cache {
+            // println!("{}", tri);
+            self.draw_tri(tri);
+        }
+    }
 }
 impl World {
     pub fn new() -> World {
@@ -73,5 +80,10 @@ impl World {
     }
     pub fn add(&mut self, g: Geometry) {
         self.geometries.push(g);
+    }
+    pub fn render_frame(&mut self) {
+        for geo in &mut self.geometries {
+            self.camera.draw_geometry(geo);
+        }
     }
 }
