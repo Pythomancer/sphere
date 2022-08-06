@@ -63,13 +63,6 @@ impl Camera {
         println!("{}", t);
         t.draw();
     }
-    pub fn draw_geometry(&mut self, geometry: &mut Geometry) {
-        geometry.make_tris();
-        for tri in &geometry.tris_cache {
-            // println!("{}", tri);
-            self.draw_tri(tri);
-        }
-    }
 }
 impl World {
     pub fn new() -> World {
@@ -83,7 +76,7 @@ impl World {
     }
     pub fn render_frame(&mut self) {
         for geo in &mut self.geometries {
-            self.camera.draw_geometry(geo);
+            // self.camera.draw_geometry(geo);
         }
     }
 }

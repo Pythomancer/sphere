@@ -1,3 +1,4 @@
+use crate::matrix::Vec3;
 use std::fmt;
 use std::ops::{Add, AddAssign, Sub};
 
@@ -23,6 +24,18 @@ impl Add for Point3D {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+}
+
+impl Add<Vec3> for Point3D {
+    type Output = Self;
+
+    fn add(self, other: Vec3) -> Self {
         Self {
             x: self.x + other.x,
             y: self.y + other.y,

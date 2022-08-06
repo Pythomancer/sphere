@@ -1,111 +1,72 @@
-use crate::threed::*;
+use crate::{matrix::Vec3, threed::*};
 use std::fmt;
-type Handle = usize;
 pub struct Geometry {
-    vertices: Vec<Vertex>,
-    pub tris_cache: Vec<Triangle3D>,
+    vertices: Vec<Vec3>,
+    pub tris: Vec<Triangle>,
+    center: Point3D,
 }
 #[derive(Clone)]
-pub struct Vertex {
-    coordinate: Point3D,
-    links: Vec<Handle>,
+pub struct Triangle {
+    links: [usize; 3],
+}
+impl Triangle {
+    pub fn flip(&self) -> Triangle {
+        Triangle {
+            links: [self.links[0], self.links[2], self.links[1]],
+        }
+    }
 }
 impl Geometry {
-    fn add_point(&mut self, x: f32, y: f32, z: f32) {
-        self.vertices.push(Vertex {
-            coordinate: Point3D { x, y, z },
-            links: Vec::new(),
-        })
-    }
-    fn link(&mut self, vertex: Handle, to: Handle) {
-        self.vertices
-            .get_mut(vertex)
-            .expect("failed to find vertex at given index: fn link")
-            .links
-            .push(to);
-    }
-    fn get_links(&self, at: Handle) -> Vec<Handle> {
-        self.vertices
-            .get(at)
-            .expect("failed to find vertex at given index: fn get_links")
-            .clone()
-            .links
-    }
-    fn get_pt_at(&self, at: Handle) -> Point3D {
-        self.vertices
-            .get(at)
-            .expect("failed to find vertex at given index: fn get_pt_at")
-            .coordinate
-    }
-    fn add_if_no_match(&mut self, tri: Triangle3D) -> bool {
-        for t in &self.tris_cache {
-            if t.matches(&tri) {
-                return true;
-            }
-        }
-        self.tris_cache.push(tri);
-        false
-    }
-    pub fn cube(sidelen: f32, c: Point3D) -> Geometry {
-        let mut vol = Geometry {
+    pub fn new(center: Point3D) -> Geometry {
+        Geometry {
             vertices: Vec::new(),
-            tris_cache: Vec::new(),
-        };
-        let r = sidelen / 2.0;
-        vol.add_point(c.x + r, c.y + r, c.z + r); // 0
-        vol.add_point(c.x + r, c.y + r, c.z - r); // 1
-        vol.add_point(c.x + r, c.y - r, c.z + r); // 2
-        vol.add_point(c.x + r, c.y - r, c.z - r); // 3
-        vol.add_point(c.x - r, c.y + r, c.z + r); // 4
-        vol.add_point(c.x - r, c.y + r, c.z - r); // 5
-        vol.add_point(c.x - r, c.y - r, c.z + r); // 6
-        vol.add_point(c.x - r, c.y - r, c.z - r); // 7
-        for index in 0..8 {
-            for link_index in 0..8 {
-                if link_index != index && link_index != 7 - index {
-                    vol.link(index, link_index);
-                }
-            }
+            tris: Vec::new(),
+            center,
         }
-        // for v in &vol.vertices {
-        //     println!("{}", v);
-        // }
+    }
+    pub fn add_point(&mut self, pt: Vec3) {
+        self.vertices.push(pt);
+    }
+    pub fn add_tri(&mut self, a: usize, b: usize, c: usize) {
+        self.tris.push(Triangle { links: [a, b, c] });
+    }
+    pub fn cube(center: Point3D) -> Geometry {
+        let mut vol = Geometry::new(center);
+        vol.add_point(Vec3::new(1.0, 1.0, 1.0));
+        vol.add_point(Vec3::new(1.0, 1.0, -1.0));
+        vol.add_point(Vec3::new(1.0, -1.0, 1.0));
+        vol.add_point(Vec3::new(1.0, -1.0, -1.0));
+        vol.add_point(Vec3::new(1.0, 1.0, 1.0));
+        vol.add_point(Vec3::new(1.0, 1.0, -1.0));
+        vol.add_point(Vec3::new(1.0, -1.0, 1.0));
+        vol.add_point(Vec3::new(1.0, -1.0, -1.0));
+        vol.add_tri(0, 2, 1); // 0
+        vol.add_tri(3, 1, 2);
+        vol.add_tri(0, 4, 2); // 1
+        vol.add_tri(6, 2, 4);
+        vol.add_tri(0, 1, 4); // 2
+        vol.add_tri(5, 4, 1);
+        vol.add_tri(4, 5, 6); // 3
+        vol.add_tri(7, 6, 5);
+        vol.add_tri(1, 3, 5); // 4
+        vol.add_tri(7, 5, 3);
+        vol.add_tri(2, 6, 4); // 5
+        vol.add_tri(7, 4, 6);
         vol
     }
-    pub fn make_tris(&mut self) {
-        self.tris_cache = Vec::new();
-        for v_handle in 0..self.vertices.len() {
-            for link in self.get_links(v_handle) {
-                for link_link in self.get_links(link) {
-                    let tri = Triangle3D {
-                        a: self.get_pt_at(v_handle),
-                        b: self.get_pt_at(link),
-                        c: self.get_pt_at(link_link),
-                    };
-                    if link_link != v_handle {
-                        if self.add_if_no_match(tri) {}
-                    }
-                }
-            }
+    pub fn get_link_pt(&self, idx: usize) -> Point3D {
+        self.center + self.vertices[idx]
+    }
+    pub fn tris_to_global(&self) -> Vec<Triangle3D> {
+        let mut ts: Vec<Triangle3D> = Vec::new();
+        for tri in &self.tris {
+            ts.push(Triangle3D {
+                a: self.get_link_pt(tri.links[0]),
+                b: self.get_link_pt(tri.links[1]),
+                c: self.get_link_pt(tri.links[2]),
+            })
         }
+        ts
     }
-}
-
-impl Vertex {
-    pub fn new() -> Vertex {
-        Vertex {
-            coordinate: Point3D::new(),
-            links: Vec::new(),
-        }
-    }
-}
-impl fmt::Display for Vertex {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Vertex {}, links: {}",
-            self.coordinate,
-            format!("{:?}", self.links)
-        )
-    }
+    pub fn apply_transformation(&mut self) {}
 }

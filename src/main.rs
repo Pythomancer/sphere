@@ -16,14 +16,14 @@ async fn main() {
     loop {
         clear_background(WHITE);
         let mut world = World::new();
-        world.add(Geometry::cube(
-            0.3,
-            Point3D {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            },
-        ));
+        // world.add(Geometry::cube(
+        //     0.3,
+        //     Point3D {
+        //         x: 0.0,
+        //         y: 0.0,
+        //         z: 0.0,
+        //     },
+        // ));
         world.render_frame();
         let t: u128 = SystemTime::now()
             .duration_since(time)
