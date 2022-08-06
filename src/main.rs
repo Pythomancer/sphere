@@ -1,3 +1,4 @@
+pub mod matrix;
 pub mod nvol;
 pub mod render;
 pub mod threed;
