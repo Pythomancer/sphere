@@ -1,18 +1,36 @@
 pub mod matrix;
 pub mod nvol;
+pub mod operations;
 pub mod render;
 pub mod threed;
 pub mod twod;
+use crate::matrix::Matrix4;
 use crate::nvol::Geometry;
 use crate::render::{Camera, World};
 use crate::threed::Point3D;
 use macroquad::prelude::*;
+use matrix::Vector4;
 use std::time::SystemTime;
 
 #[macroquad::main("Particles")]
 async fn main() {
     println!("starting");
     let mut time = SystemTime::now();
+    let rot = Matrix4::rotation(34.0, 45.0, 55.0);
+    println!("{}", rot);
+    let a = Vector4 {
+        x: 0.4,
+        y: 0.3,
+        z: 0.5,
+        w: 0.0,
+    };
+    let b = Vector4 {
+        x: 0.4,
+        y: 0.3,
+        z: 0.5,
+        w: 0.0,
+    };
+    println!("{}", a + b);
     loop {
         clear_background(WHITE);
         let mut world = World::new();

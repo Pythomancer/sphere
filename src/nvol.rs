@@ -1,5 +1,4 @@
 use crate::{matrix::*, threed::*};
-use std::fmt;
 pub struct Geometry {
     vertices: Vec<Vector4>,
     pub tris: Vec<Triangle>,
@@ -68,5 +67,9 @@ impl Geometry {
         }
         ts
     }
-    pub fn apply_transformation(&mut self) {}
+    pub fn apply_transformation(&mut self, transformation: &Matrix4) {
+        for i in &mut self.vertices {
+            i.transform(&transformation);
+        }
+    }
 }

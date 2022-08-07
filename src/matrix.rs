@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Mul, MulAssign, Sub};
+use crate::operations;
 
 #[derive(Clone, Copy)]
 pub struct Vector4 {
@@ -7,11 +7,22 @@ pub struct Vector4 {
     pub z: f32,
     pub w: f32,
 }
+pub struct Point4 {}
 pub struct Matrix4 {
-    a: Vector4,
-    b: Vector4,
-    c: Vector4,
-    d: Vector4,
+    pub a: Vector4,
+    pub b: Vector4,
+    pub c: Vector4,
+    pub d: Vector4,
+}
+pub enum Origin {
+    Point4,
+    CoSys,
+}
+pub struct CoSys {
+    pub origin: Origin,
+    pub i: Vector4,
+    pub j: Vector4,
+    pub k: Vector4,
 }
 impl Vector4 {
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vector4 {
@@ -42,8 +53,16 @@ impl Vector4 {
             1.0,
         ])
     }
+    pub fn transform(&self, other: &Matrix4) -> Self {
+        let tp = other.transpose();
+        Vector4 {
+            x: tp.a.dot(self),
+            y: tp.b.dot(self),
+            z: tp.c.dot(self),
+            w: tp.d.dot(self),
+        }
+    }
 }
-
 impl Matrix4 {
     pub fn from_slice(slice: &[Vector4; 4]) -> Matrix4 {
         Matrix4 {
@@ -120,7 +139,7 @@ impl Matrix4 {
             },
         }
     }
-    fn rotation(alpha: f32, beta: f32, gamma: f32) -> Matrix4 {
+    pub fn rotation(alpha: f32, beta: f32, gamma: f32) -> Matrix4 {
         Matrix4::from_slices([
             [
                 alpha.cos() * beta.cos(),
@@ -150,64 +169,5 @@ impl Matrix4 {
             [0.0, 0.0, factor, 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ])
-    }
-}
-impl Add for Vector4 {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-            w: self.w + other.w,
-        }
-    }
-}
-
-impl Sub for Vector4 {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-            w: self.w - other.w,
-        }
-    }
-}
-
-impl AddAssign for Vector4 {
-    fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-            w: self.w - other.w,
-        };
-    }
-}
-impl MulAssign<f32> for Vector4 {
-    fn mul_assign(&mut self, other: f32) {
-        *self = Self {
-            x: self.x * other,
-            y: self.y * other,
-            z: self.z * other,
-            w: self.w,
-        };
-    }
-}
-
-impl Mul<f32> for Vector4 {
-    type Output = Self;
-
-    fn mul(self, other: f32) -> Self {
-        Self {
-            x: self.x * other,
-            y: self.y * other,
-            z: self.z * other,
-            w: self.w,
-        }
     }
 }
