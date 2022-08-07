@@ -1,7 +1,7 @@
-use crate::{matrix::Vec3, threed::*};
+use crate::{matrix::*, threed::*};
 use std::fmt;
 pub struct Geometry {
-    vertices: Vec<Vec3>,
+    vertices: Vec<Vector4>,
     pub tris: Vec<Triangle>,
     center: Point3D,
 }
@@ -24,7 +24,7 @@ impl Geometry {
             center,
         }
     }
-    pub fn add_point(&mut self, pt: Vec3) {
+    pub fn add_point(&mut self, pt: Vector4) {
         self.vertices.push(pt);
     }
     pub fn add_tri(&mut self, a: usize, b: usize, c: usize) {
@@ -32,14 +32,14 @@ impl Geometry {
     }
     pub fn cube(center: Point3D) -> Geometry {
         let mut vol = Geometry::new(center);
-        vol.add_point(Vec3::new(1.0, 1.0, 1.0));
-        vol.add_point(Vec3::new(1.0, 1.0, -1.0));
-        vol.add_point(Vec3::new(1.0, -1.0, 1.0));
-        vol.add_point(Vec3::new(1.0, -1.0, -1.0));
-        vol.add_point(Vec3::new(1.0, 1.0, 1.0));
-        vol.add_point(Vec3::new(1.0, 1.0, -1.0));
-        vol.add_point(Vec3::new(1.0, -1.0, 1.0));
-        vol.add_point(Vec3::new(1.0, -1.0, -1.0));
+        vol.add_point(Vector4::new(1.0, 1.0, 1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, 1.0, -1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, -1.0, 1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, -1.0, -1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, 1.0, 1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, 1.0, -1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, -1.0, 1.0, 1.0));
+        vol.add_point(Vector4::new(1.0, -1.0, -1.0, 1.0));
         vol.add_tri(0, 2, 1); // 0
         vol.add_tri(3, 1, 2);
         vol.add_tri(0, 4, 2); // 1

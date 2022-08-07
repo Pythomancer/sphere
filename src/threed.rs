@@ -1,4 +1,4 @@
-use crate::matrix::Vec3;
+use crate::matrix::Vector4;
 use std::fmt;
 use std::ops::{Add, AddAssign, Sub};
 
@@ -32,10 +32,10 @@ impl Add for Point3D {
     }
 }
 
-impl Add<Vec3> for Point3D {
+impl Add<Vector4> for Point3D {
     type Output = Self;
 
-    fn add(self, other: Vec3) -> Self {
+    fn add(self, other: Vector4) -> Self {
         Self {
             x: self.x + other.x,
             y: self.y + other.y,
