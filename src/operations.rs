@@ -79,3 +79,17 @@ impl Display for Matrix4 {
         )
     }
 }
+impl Sub for Point4 {
+    type Output = Vector4;
+    fn sub(self, other: Self) -> Vector4 {
+        self.coords - other.coords
+    }
+}
+impl Add<Vector4> for Point4 {
+    type Output = Point4;
+    fn add(self, rhs: Vector4) -> Self::Output {
+        Point4 {
+            coords: self.coords + rhs,
+        }
+    }
+}

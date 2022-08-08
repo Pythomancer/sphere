@@ -7,7 +7,9 @@ pub struct Vector4 {
     pub z: f32,
     pub w: f32,
 }
-pub struct Point4 {}
+pub struct Point4 {
+    pub coords: Vector4,
+}
 pub struct Matrix4 {
     pub a: Vector4,
     pub b: Vector4,
