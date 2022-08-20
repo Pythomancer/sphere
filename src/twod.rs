@@ -17,43 +17,6 @@ pub struct Triangle2D {
     pub c: Point2D,
 }
 
-impl Add for Point2D {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-impl Sub for Point2D {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
-    }
-}
-
-impl AddAssign for Point2D {
-    fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        };
-    }
-}
-
-impl fmt::Display for Point2D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(x={}, y={})", self.x, self.y)
-    }
-}
-
 impl Point2D {
     pub fn new() -> Point2D {
         Point2D { x: 0.0, y: 0.0 }
@@ -132,16 +95,6 @@ impl Triangle2D {
             vec2(self.c.x, self.c.y),
             3.0,
             RED,
-        )
-    }
-}
-
-impl fmt::Display for Triangle2D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "(({}, {}), ({}, {}), ({}, {})",
-            self.a.x, self.a.y, self.b.x, self.b.y, self.c.x, self.c.y
         )
     }
 }

@@ -1,6 +1,4 @@
 use crate::matrix::Vector4;
-use std::fmt;
-use std::ops::{Add, AddAssign, Sub};
 
 #[derive(PartialEq, Clone, Copy)]
 pub struct Point3D {
@@ -19,51 +17,6 @@ pub struct Triangle3D {
     pub a: Point3D,
     pub b: Point3D,
     pub c: Point3D,
-}
-impl Add for Point3D {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-}
-
-impl Add<Vector4> for Point3D {
-    type Output = Self;
-
-    fn add(self, other: Vector4) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-}
-
-impl Sub for Point3D {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
-}
-
-impl AddAssign for Point3D {
-    fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        };
-    }
 }
 
 impl Point3D {
@@ -154,15 +107,5 @@ impl SPoint {
             theta: self.theta - other.theta,
             rad: self.rad - other.rad,
         }
-    }
-}
-impl fmt::Display for Point3D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(({}, {}, {})", self.x, self.y, self.z)
-    }
-}
-impl fmt::Display for Triangle3D {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(({}, {}, {})", self.a, self.b, self.c)
     }
 }

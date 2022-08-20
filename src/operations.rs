@@ -1,4 +1,6 @@
 use crate::matrix::*;
+use crate::threed::*;
+use crate::twod::*;
 use std::{
     fmt,
     fmt::Display,
@@ -91,5 +93,99 @@ impl Add<Vector4> for Point4 {
         Point4 {
             coords: self.coords + rhs,
         }
+    }
+}
+impl fmt::Display for Point3D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+impl fmt::Display for Triangle3D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(({}, {}, {})", self.a, self.b, self.c)
+    }
+}
+impl Add for Point3D {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+}
+impl Add<Vector4> for Point3D {
+    type Output = Self;
+
+    fn add(self, other: Vector4) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+}
+impl Sub for Point3D {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+impl AddAssign for Point3D {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        };
+    }
+}
+impl Add for Point2D {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+impl Sub for Point2D {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+impl AddAssign for Point2D {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        };
+    }
+}
+impl fmt::Display for Point2D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(x={}, y={})", self.x, self.y)
+    }
+}
+impl fmt::Display for Triangle2D {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "(({}, {}), ({}, {}), ({}, {})",
+            self.a.x, self.a.y, self.b.x, self.b.y, self.c.x, self.c.y
+        )
     }
 }
